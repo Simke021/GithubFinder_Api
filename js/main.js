@@ -16,7 +16,40 @@ $(document).ready(function(){
                 client_secret:'d8dbb523e73b8b464b5a9f548954456fe53931e1'
             }
         }).done(function(user){
+            // Latest repos request
+            $.ajax({
+                url:'https://api.github.com/users/'+ username +'/repos',
+                data:{
+                    client_id:'2ac9b390903333e799de',
+                    client_secret:'d8dbb523e73b8b464b5a9f548954456fe53931e1',
+                    sort:'created: asc',
+                    per_page: 5
+                }
+            }).done(function(repos){
+                // console.log(repos);
 
+                // Looping all repos
+                $.each(repos, function(index, repo){
+                    $('#repos').append(`
+                        <div class="well">
+                            <div class="row">
+                                <div class="col-md-7">
+                                    <strong>${repo.name}</strong>: ${repo.description}
+                                </div>
+                                <div class="col-md-3">
+                                    <span class="label label-default">Forks: ${repo.forks_count}</span>
+                                    <span class="label label-primary">Watchers: ${repo.watchers_count}</span>
+                                    <span class="label label-success">Stars: ${repo.stargazers_count}</span>
+                                </div>
+                                <div class="col-md-2">
+                                    <a href="${repo.html_url}" target="_blank" class="btn btn-default btn-xs">Repository Page</a>
+                                </div>
+                            </div>
+                        </div>
+                    `);
+                });
+            });
+            
             // select div with id="profile" and put user data into
             $('#profile').html(`
             <div class="panel panel-default">
@@ -46,6 +79,8 @@ $(document).ready(function(){
                     </div>
                 </div>
             </div>
+            <h3 class="page-header">Latest 5 Repositories</h3>
+            <div id="repos"></div>
             `);
         });
     })
